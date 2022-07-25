@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"bwastartup/user"
 	"log"
 
 	"gorm.io/driver/mysql"
@@ -10,11 +10,17 @@ import (
 
 func main() {
 	dsn := "root:@tcp(127.0.0.1:3306)/db-bwa-startup?charset=utf8mb4&parseTime=True&loc=Local"
-	_, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	fmt.Println("Connection database ready")
+	userRepository := user.NewRepository(db)
+	user := user.User{
+		Name: "Test Simpan",
+	}
+
+	userRepository.Save(user)
+
 }
