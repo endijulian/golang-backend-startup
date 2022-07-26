@@ -22,17 +22,13 @@ func main() {
 	userService := user.NewService(userRepository)
 
 	userHandler := handler.NewUserHandler(userService)
+
 	router := gin.Default()
 	api := router.Group("api/v1")
+
 	api.POST("/users", userHandler.RegisterUser)
+	api.POST("/sessions", userHandler.Login)
+
 	router.Run()
-
-	// userInput := user.RegisterUserInput{}
-	// userInput.Name = "Test simpan dari service"
-	// userInput.Email = "contoh@gmail.com"
-	// userInput.Occupation = "anak band"
-	// userInput.Password = "password"
-
-	// userService.RegisterUser(userInput)
 
 }
