@@ -50,22 +50,28 @@ func FormatCampaigns(campaigns []Campaign) []CampaignFormatter {
 }
 
 type CampaignDetailFormmater struct {
-	ID               int                   `json:"id"`
-	Name             string                `json:"name"`
-	ShortDescription string                `json:"short_description"`
-	Description      string                `json:"description"`
-	ImageURL         string                `json:"image_url"`
-	GoalAmount       int                   `json:"goal_amount"`
-	CurrentAmount    int                   `json:"current_amount"`
-	UserID           int                   `json:"user_id"`
-	Slug             string                `json:"slug"`
-	Perks            []string              `json:"perks"`
-	User             CampaignUserFormmater `json:"user"`
+	ID               int                       `json:"id"`
+	Name             string                    `json:"name"`
+	ShortDescription string                    `json:"short_description"`
+	Description      string                    `json:"description"`
+	ImageURL         string                    `json:"image_url"`
+	GoalAmount       int                       `json:"goal_amount"`
+	CurrentAmount    int                       `json:"current_amount"`
+	UserID           int                       `json:"user_id"`
+	Slug             string                    `json:"slug"`
+	Perks            []string                  `json:"perks"`
+	User             CampaignUserFormmater     `json:"user"`
+	Images           []CampaignImagesFormmater `json:"images"`
 }
 
 type CampaignUserFormmater struct {
 	Name     string `json:"name"`
 	ImageURL string `json:"image_url"`
+}
+
+type CampaignImagesFormmater struct {
+	ImageURL  string `json:"image_url"`
+	IsPrimary bool   `json:"is_primary"`
 }
 
 func FormatCampaignDetail(campaign Campaign) CampaignDetailFormmater {
@@ -93,7 +99,7 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormmater {
 
 	campaignDetailFormmater.Perks = perks
 
-	//Json formatter relasi user
+	//Json formatter relasi get user
 	user := campaign.User
 
 	campaignUserFormmater := CampaignUserFormmater{}
@@ -102,6 +108,26 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormmater {
 
 	//Next formmater
 	campaignDetailFormmater.User = campaignUserFormmater
+
+	//Json formmater relasi get image
+	images := []CampaignImagesFormmater{}
+	for _, image := range campaign.CampaignImages {
+
+		campaignImageFormmater := CampaignImagesFormmater{}
+		campaignImageFormmater.ImageURL = image.FileName
+
+		isPrimary := false
+		if image.IsPrimary == 1 {
+			isPrimary = true
+		}
+		campaignImageFormmater.IsPrimary = isPrimary
+
+		images = append(images, campaignImageFormmater)
+
+	}
+
+	//Next formmater
+	campaignDetailFormmater.Images = images
 
 	return campaignDetailFormmater
 
