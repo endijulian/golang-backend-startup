@@ -3,6 +3,7 @@ package handler
 import (
 	"bwastartup/user"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -54,4 +55,45 @@ func (h *userHandler) Create(c *gin.Context) {
 
 	c.Redirect(http.StatusFound, "/users")
 
+}
+
+func (h *userHandler) Edit(c *gin.Context) {
+	idParam := c.Param("id")
+	id, _ := strconv.Atoi(idParam)
+
+	registerdUser, err := h.userService.GetUserByID(id)
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", nil)
+		return
+	}
+
+	input := user.FormUpdateUserInput{}
+	input.ID = registerdUser.ID
+	input.Name = registerdUser.Name
+	input.Email = registerdUser.Email
+	input.Occupation = registerdUser.Occupation
+
+	c.HTML(http.StatusOK, "user_edit.html", input)
+}
+
+func (h *userHandler) Update(c *gin.Context) {
+	idParam := c.Param("id")
+	id, _ := strconv.Atoi(idParam)
+
+	var input user.FormUpdateUserInput
+	err := c.ShouldBind(&input)
+	if err != nil {
+		input.Error = err
+		c.HTML(http.StatusOK, "user_edit.html", input)
+		return
+	}
+
+	input.ID = id
+	_, err = h.userService.UpdateUser(input)
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", nil)
+		return
+	}
+
+	c.Redirect(http.StatusFound, "/users")
 }
