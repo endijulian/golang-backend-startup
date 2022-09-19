@@ -10,10 +10,14 @@ import (
 	"bwastartup/user"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strings"
+
+	webHandler "bwastartup/webAdmin/handler"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -44,9 +48,20 @@ func main() {
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHandler(transactionServie)
 
+	//Handler Web CMS
+	userWebHandler := webHandler.NewUserHandler(userService)
+
 	router := gin.Default()
 	router.Use(cors.Default())
+
+	//load template admin cms
+	router.HTMLRender = loadTemplates("./webAdmin/templates")
+
 	router.Static("/images", "./images")
+	router.Static("/css", "./webAdmin/assets/css")
+	router.Static("/js", "./webAdmin/assets/js")
+	router.Static("/webfonts", "./webAdmin/assets/webfonts")
+
 	api := router.Group("api/v1")
 
 	//Route User
@@ -69,6 +84,15 @@ func main() {
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 	api.POST("/transactions/notification", transactionHandler.GetNotification)
 
+	//Router web CMS admin
+	router.GET("/users", userWebHandler.Index)
+	router.GET("/users/new", userWebHandler.New)
+	router.POST("/users", userWebHandler.Create)
+
+	// port custom
+	// router.Run(":8082")
+
+	// port default
 	router.Run()
 
 }
@@ -115,4 +139,29 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		c.Set("currentUser", user)
 
 	}
+}
+
+func loadTemplates(templatesDir string) multitemplate.Renderer {
+	r := multitemplate.NewRenderer()
+
+	// layouts, err := filepath.Glob(templatesDir + "/layouts/*.html")
+	layouts, err := filepath.Glob(templatesDir + "/layouts/*")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// includes, err := filepath.Glob(templatesDir + "/includes/*.html")
+	includes, err := filepath.Glob(templatesDir + "/**/*")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// Generate our templates map from our layouts/ and includes/ directories
+	for _, include := range includes {
+		layoutCopy := make([]string, len(layouts))
+		copy(layoutCopy, layouts)
+		files := append(layoutCopy, include)
+		r.AddFromFiles(filepath.Base(include), files...)
+	}
+	return r
 }
