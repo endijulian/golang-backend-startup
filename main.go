@@ -90,6 +90,8 @@ func main() {
 	router.POST("/users", userWebHandler.Create)
 	router.GET("/users/edit/:id", userWebHandler.Edit)
 	router.POST("/users/updates/:id", userWebHandler.Update)
+	router.GET("/users/avatars/:id", userWebHandler.NewAvatar)
+	router.POST("/users/avatars/:id", userWebHandler.CreateAvatar)
 
 	// port custom
 	// router.Run(":8082")
