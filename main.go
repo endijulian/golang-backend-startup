@@ -50,6 +50,7 @@ func main() {
 
 	//Handler Web CMS
 	userWebHandler := webHandler.NewUserHandler(userService)
+	campaignWebHandler := webHandler.NewCampaignHandler(campaignService, userService)
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -84,7 +85,7 @@ func main() {
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 	api.POST("/transactions/notification", transactionHandler.GetNotification)
 
-	//Router web CMS admin
+	//Router USER web CMS admin
 	router.GET("/users", userWebHandler.Index)
 	router.GET("/users/new", userWebHandler.New)
 	router.POST("/users", userWebHandler.Create)
@@ -92,6 +93,14 @@ func main() {
 	router.POST("/users/updates/:id", userWebHandler.Update)
 	router.GET("/users/avatars/:id", userWebHandler.NewAvatar)
 	router.POST("/users/avatars/:id", userWebHandler.CreateAvatar)
+
+	//Route CAMPAIGN web CMS
+	router.GET("/campaigns", campaignWebHandler.Index)
+	router.GET("/campaigns/new", campaignWebHandler.New)
+	router.POST("/campaigns", campaignWebHandler.Create)
+	router.GET("/campaigns/image/:id", campaignWebHandler.NewImage)
+	router.POST("/campaigns/image/:id", campaignWebHandler.CreateImage)
+	router.GET("/campaigns/edit/:id", campaignWebHandler.Edit)
 
 	// port custom
 	// router.Run(":8082")
