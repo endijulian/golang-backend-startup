@@ -1,0 +1,46 @@
+{{ define "content" }}
+
+    <h2 class="mb-4">New Campaign</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" readonly name="name" placeholder="Enter name" class="form-control" required value="{{ .Name }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="short_description">Short Description</label>
+                    <input type="text" readonly name="short_description" placeholder="Enter short_description" class="form-control" required value="{{ .ShortDescription }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" readonly id="" cols="30" rows="10" class="form-control" required>{{ .Description }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="goal_amount">Goal Amount</label>
+                    <input type="text" readonly name="goal_amount" placeholder="Enter goal_amount" class="form-control" required value="{{ .GoalAmountFormatIDR }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="perks">Perks</label>
+                    <input type="text" readonly name="perks" placeholder="Enter perks" class="form-control" required value="{{ .Perks }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="perks">Backer Count</label>
+                    <input type="text" readonly name="perks" placeholder="Enter perks" class="form-control" required value="{{ .BackerCount }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="perks">Current Amount</label>
+                    <input type="text" readonly name="perks" placeholder="Enter perks" class="form-control" required value="{{ .CurrentAmountFormatIDR }}">
+                </div>
+
+        </div>
+    </div>
+
+{{ end }}
