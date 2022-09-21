@@ -54,6 +54,7 @@ func main() {
 	userWebHandler := webHandler.NewUserHandler(userService)
 	campaignWebHandler := webHandler.NewCampaignHandler(campaignService, userService)
 	transactionWebHandler := webHandler.NewTransactionHandler(transactionServie)
+	sessionWebHandler := webHandler.NewSessionHandler(userService)
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -113,6 +114,10 @@ func main() {
 
 	//Route CAMPAIGN web CMS
 	router.GET("/transactions", authAdminMiddleware(), transactionWebHandler.Index)
+
+	//Route page login
+	router.GET("/login", sessionWebHandler.New)
+	router.POST("/session", sessionWebHandler.Create)
 
 	// port custom
 	// router.Run(":8082")
