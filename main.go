@@ -118,6 +118,7 @@ func main() {
 	//Route page login
 	router.GET("/login", sessionWebHandler.New)
 	router.POST("/session", sessionWebHandler.Create)
+	router.GET("/logout", sessionWebHandler.Logout)
 
 	// port custom
 	// router.Run(":8082")
